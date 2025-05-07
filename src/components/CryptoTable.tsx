@@ -6,7 +6,7 @@ import {
   setSorting,
   CryptoAsset
 } from '../features/crypto/cryptoSlice';
-import { Bitcoin, ChartLine, DollarSign, Ethereum } from 'lucide-react';
+import { Bitcoin, ChartLine, DollarSign, Cpu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import SparklineChart from './SparklineChart';
 
@@ -68,7 +68,7 @@ const CryptoTable = () => {
       case 'bitcoin':
         return <Bitcoin className="h-6 w-6 text-crypto-orange" />;
       case 'ethereum':
-        return <Ethereum className="h-6 w-6 text-purple-400" />;
+        return <Cpu className="h-6 w-6 text-purple-400" />;
       default:
         return <DollarSign className="h-6 w-6 text-blue-400" />;
     }
