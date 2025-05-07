@@ -8,8 +8,8 @@ import MockWebSocket from '../utils/mockWebSocket';
 
 const Index = () => {
   useEffect(() => {
-    // Start the mock WebSocket connection
-    const mockSocket = new MockWebSocket(1500); // Update every 1.5 seconds
+    // Start the mock WebSocket connection with 10 second interval
+    const mockSocket = new MockWebSocket(10000); // 10 seconds in milliseconds
     mockSocket.connect();
     
     // Cleanup on component unmount
