@@ -1,73 +1,48 @@
-# Welcome to your Lovable project
 
-## Project info
+# CryptoTracker - Real-time Cryptocurrency Dashboard
 
-**URL**: https://lovable.dev/projects/0acd93ed-02de-4b9c-bde0-898c1ab12314
+A responsive cryptocurrency price tracker app built with React and Redux Toolkit.
 
-## How can I edit this code?
+![CryptoTracker App](./screenshot.png)
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- Real-time cryptocurrency price updates (simulated using intervals)
+- State management with Redux Toolkit
+- Responsive design that works on all devices
+- Sorting capabilities for all data columns
+- Visual indicators for price changes
+- Color-coded indicators for price movements
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0acd93ed-02de-4b9c-bde0-898c1ab12314) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- React for the UI
+- Redux Toolkit for state management
+- Tailwind CSS for styling
+- TypeScript for type checking
 
-**Use your preferred IDE**
+## How It Works
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The application simulates real-time data updates by randomly adjusting cryptocurrency prices and metrics every 1-2 seconds. This is managed through a mock WebSocket service that dispatches updates to the Redux store.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Key Components
 
-Follow these steps:
+- **CryptoTable**: Displays cryptocurrency data in a sortable, responsive table
+- **SparklineChart**: Shows a simplified 7-day price trend chart
+- **MockWebSocket**: Simulates real-time data updates
+- **cryptoSlice**: Redux slice that manages the state of the cryptocurrency data
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Getting Started
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Start the development server with `npm run dev`
+4. Open your browser to the URL shown in the terminal
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Customization
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+You can modify the update frequency in the `MockWebSocket` class by changing the `updateFrequency` parameter when instantiating the class.
 
-**Edit a file directly in GitHub**
+## License
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/0acd93ed-02de-4b9c-bde0-898c1ab12314) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT

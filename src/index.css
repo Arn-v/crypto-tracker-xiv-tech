@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,6 +97,10 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-crypto-black text-white;
   }
+}
+
+.price-changed {
+  animation: pulse-price 0.5s ease-in-out;
 }
