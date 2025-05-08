@@ -1,10 +1,11 @@
-
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../app/store';
 import CryptoTable from '../components/CryptoTable';
 import Header from '../components/Header';
 import MockWebSocket from '../utils/mockWebSocket';
+import CryptoPriceList from '@/components/CryptoPriceList';
+import '../index.css' ; 
 
 const Index = () => {
   useEffect(() => {
@@ -20,7 +21,7 @@ const Index = () => {
 
   return (
     <Provider store={store}>
-      <div className="min-h-screen bg-crypto-black text-white">
+      <div className="min-h-screen bg-crypto-black  text-white h-screen overflow-y-scroll no-scrollbar">
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="mb-8">

@@ -1,29 +1,26 @@
-
 import { store } from '../app/store';
 import { updatePrices } from '../features/crypto/cryptoSlice';
 
 class MockWebSocket {
-  private intervalId: number | null = null;
-  private updateFrequency: number;
-
-  constructor(updateFrequency: number = 10000) {  // Changed default to 10 seconds (10000ms)
+  constructor(updateFrequency = 10000) {  // Changed default to 10 seconds (10000ms)
     this.updateFrequency = updateFrequency;
+    this.intervalId = null;
   }
 
-  connect(): void {
+  connect() {
     this.intervalId = window.setInterval(() => {
       this.generatePriceUpdates();
     }, this.updateFrequency);
   }
 
-  disconnect(): void {
+  disconnect() {
     if (this.intervalId !== null) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
   }
 
-  private generatePriceUpdates(): void {
+  generatePriceUpdates() {
     const assets = store.getState().crypto.assets;
     
     // Randomly select 1 to 3 assets to update instead of updating all at once
@@ -69,7 +66,7 @@ class MockWebSocket {
   }
   
   // Helper function to shuffle an array (Fisher-Yates algorithm)
-  private shuffleArray(array: number[]): void {
+  shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];

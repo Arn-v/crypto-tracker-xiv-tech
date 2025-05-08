@@ -2,6 +2,7 @@
 import React from 'react';
 
 const Header = () => {
+  
   return (
     <header className="bg-crypto-black py-4 border-b border-crypto-darkgray">
       <div className="container mx-auto px-4">

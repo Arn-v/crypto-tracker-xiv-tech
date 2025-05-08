@@ -1,45 +1,7 @@
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-
-export interface CryptoAsset {
-  id: string;
-  rank: number;
-  name: string;
-  symbol: string;
-  logo: string;
-  price: number;
-  priceChange1h: number;
-  priceChange24h: number;
-  priceChange7d: number;
-  marketCap: number;
-  volume24h: number;
-  circulatingSupply: number;
-  maxSupply: number | null;
-  lastUpdated: string;
-}
-
-interface PriceUpdate {
-  id: string;
-  price: number;
-  priceChange1h: number;
-  priceChange24h: number;
-  priceChange7d: number;
-  volume24h: number;
-}
-
-interface CryptoState {
-  assets: CryptoAsset[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-  sorting: {
-    column: keyof CryptoAsset | null;
-    direction: 'asc' | 'desc';
-  };
-}
+import { createSlice } from '@reduxjs/toolkit';
 
 // Initial mock data
-const initialState: CryptoState = {
+const initialState = {
   assets: [
     {
       id: 'bitcoin',
@@ -222,7 +184,7 @@ const initialState: CryptoState = {
   status: 'idle',
   error: null,
   sorting: {
-    column: 'rank',
+    column: null,
     direction: 'asc',
   },
 };
@@ -231,9 +193,10 @@ const cryptoSlice = createSlice({
   name: 'crypto',
   initialState,
   reducers: {
-    updatePrices: (state, action: PayloadAction<PriceUpdate[]>) => {
-      action.payload.forEach((update) => {
-        const asset = state.assets.find((a) => a.id === update.id);
+    updatePrices: (state, action) => {
+      const updates = action.payload;
+      updates.forEach(update => {
+        const asset = state.assets.find(a => a.id === update.id);
         if (asset) {
           asset.price = update.price;
           asset.priceChange1h = update.priceChange1h;
@@ -244,41 +207,24 @@ const cryptoSlice = createSlice({
         }
       });
     },
-    setSorting: (state, action: PayloadAction<{ column: keyof CryptoAsset; direction: 'asc' | 'desc' }>) => {
+    setSorting: (state, action) => {
       state.sorting = action.payload;
     },
   },
 });
 
 export const { updatePrices, setSorting } = cryptoSlice.actions;
+export default cryptoSlice.reducer;
 
-// Selectors
-export const selectAllAssets = (state: RootState) => state.crypto.assets;
-export const selectSorting = (state: RootState) => state.crypto.sorting;
-
-// Memoized selector for sorted assets
-export const selectSortedAssets = (state: RootState) => {
+export const selectAllAssets = (state) => state.crypto.assets;
+export const selectSorting = (state) => state.crypto.sorting;
+export const selectSortedAssets = (state) => {
   const { assets, sorting } = state.crypto;
-  const { column, direction } = sorting;
-  
-  if (!column) return assets;
-  
-  return [...assets].sort((a, b) => {
-    const aValue = a[column];
-    const bValue = b[column];
-    
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return direction === 'asc' ? aValue - bValue : bValue - aValue;
-    }
-    
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return direction === 'asc' 
-        ? aValue.localeCompare(bValue) 
-        : bValue.localeCompare(aValue);
-    }
-    
+  if (!sorting.column) return assets;
+  const sorted = [...assets].sort((a, b) => {
+    if (a[sorting.column] < b[sorting.column]) return sorting.direction === 'asc' ? -1 : 1;
+    if (a[sorting.column] > b[sorting.column]) return sorting.direction === 'asc' ? 1 : -1;
     return 0;
   });
+  return sorted;
 };
-
-export default cryptoSlice.reducer;

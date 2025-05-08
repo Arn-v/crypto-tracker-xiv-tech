@@ -3,12 +3,12 @@ import { useAppSelector, useAppDispatch } from '../app/hooks';
 import {
   selectSortedAssets,
   selectSorting,
-  setSorting,
-  CryptoAsset
+  setSorting
 } from '../features/crypto/cryptoSlice';
 import { Bitcoin, ChartLine, DollarSign, Cpu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import SparklineChart from './SparklineChart';
+import { useBinanceWebSocket } from '@/lib/binanceWebSocket';
 
 const CryptoTable = () => {
   const assets = useAppSelector(selectSortedAssets);
@@ -16,13 +16,18 @@ const CryptoTable = () => {
   const dispatch = useAppDispatch();
   
   // Keep track of which prices have changed for animation
-  const [changedPrices, setChangedPrices] = useState<Record<string, boolean>>({});
-  const [previousPrices, setPreviousPrices] = useState<Record<string, number>>({});
+  const [changedPrices, setChangedPrices] = useState({});
+  const [previousPrices, setPreviousPrices] = useState({});
+
+  // Inject Binance WebSocket data
+  const { prices, priceChanges, isConnected, error } = useBinanceWebSocket(
+    assets.map(asset => asset.symbol.toLowerCase() + 'usdt')
+  );
 
   useEffect(() => {
     // Check which prices have changed
-    const newChangedPrices: Record<string, boolean> = {};
-    const newPreviousPrices: Record<string, number> = {};
+    const newChangedPrices = {};
+    const newPreviousPrices = {};
     
     assets.forEach(asset => {
       const prevPrice = previousPrices[asset.id];
@@ -40,12 +45,12 @@ const CryptoTable = () => {
     setPreviousPrices(newPreviousPrices);
   }, [assets]);
 
-  const handleSort = (column: keyof CryptoAsset) => {
+  const handleSort = (column) => {
     const direction = sorting.column === column && sorting.direction === 'asc' ? 'desc' : 'asc';
     dispatch(setSorting({ column, direction }));
   };
 
-  const formatNumber = (number: number | null, precision: number = 2): string => {
+  const formatNumber = (number, precision = 2) => {
     if (number === null) return 'N/A';
     
     if (number >= 1_000_000_000_000) {
@@ -63,7 +68,7 @@ const CryptoTable = () => {
     return `$${number.toFixed(precision)}`;
   };
 
-  const renderLogo = (logoType: string) => {
+  const renderLogo = (logoType) => {
     switch (logoType) {
       case 'bitcoin':
         return <Bitcoin className="h-6 w-6 text-crypto-orange" />;
@@ -76,6 +81,14 @@ const CryptoTable = () => {
 
   return (
     <div className="w-full overflow-x-auto">
+      {/* Connection status indicator */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+        <span className="text-sm text-gray-400">
+          {isConnected ? 'Live Binance Prices' : 'Connecting to Binance...'}
+        </span>
+        {error && <span className="text-sm text-red-500 ml-2">{error}</span>}
+      </div>
       <table className="w-full border-collapse">
         <thead className="bg-crypto-darkgray">
           <tr>
@@ -155,56 +168,62 @@ const CryptoTable = () => {
           </tr>
         </thead>
         <tbody>
-          {assets.map((asset) => (
-            <tr key={asset.id} className="border-b border-gray-800 hover:bg-crypto-darkgray/30">
-              <td className="py-4 px-4 text-left">{asset.rank}</td>
-              <td className="py-4 px-4 text-left">
-                <div className="flex items-center gap-2">
-                  {renderLogo(asset.logo)}
-                  <div>
-                    <div className="font-semibold text-white">{asset.name}</div>
-                    <div className="text-sm text-gray-400">{asset.symbol}</div>
+          {assets.map((asset) => {
+            // Try to get live data
+            const symbolKey = asset.symbol.toLowerCase() + 'usdt';
+            const livePrice = prices[symbolKey];
+            const liveChange = priceChanges[symbolKey];
+            return (
+              <tr key={asset.id} className="border-b border-gray-800 hover:bg-crypto-darkgray/30">
+                <td className="py-4 px-4 text-left">{asset.rank}</td>
+                <td className="py-4 px-4 text-left">
+                  <div className="flex items-center gap-2">
+                    {renderLogo(asset.logo)}
+                    <div>
+                      <div className="font-semibold text-white">{asset.name}</div>
+                      <div className="text-sm text-gray-400">{asset.symbol}</div>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td className={cn(
-                "py-4 px-4 text-right font-semibold",
-                changedPrices[asset.id] && "price-changed"
-              )}>
-                ${asset.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </td>
-              <td className={`py-4 px-4 text-right ${asset.priceChange1h >= 0 ? 'text-crypto-positive' : 'text-crypto-negative'}`}>
-                {asset.priceChange1h >= 0 ? '▲' : '▼'} {Math.abs(asset.priceChange1h)}%
-              </td>
-              <td className={`py-4 px-4 text-right ${asset.priceChange24h >= 0 ? 'text-crypto-positive' : 'text-crypto-negative'}`}>
-                {asset.priceChange24h >= 0 ? '▲' : '▼'} {Math.abs(asset.priceChange24h)}%
-              </td>
-              <td className={`py-4 px-4 text-right ${asset.priceChange7d >= 0 ? 'text-crypto-positive' : 'text-crypto-negative'}`}>
-                {asset.priceChange7d >= 0 ? '▲' : '▼'} {Math.abs(asset.priceChange7d)}%
-              </td>
-              <td className="py-4 px-4 text-right">{formatNumber(asset.marketCap)}</td>
-              <td className="py-4 px-4 text-right">
-                <div>{formatNumber(asset.volume24h)}</div>
-                <div className="text-sm text-gray-400">{asset.symbol}</div>
-              </td>
-              <td className="py-4 px-4 text-right">
-                <div>{asset.circulatingSupply.toLocaleString()} {asset.symbol}</div>
-                {asset.maxSupply && (
-                  <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
-                    <div 
-                      className="bg-crypto-orange h-1.5 rounded-full" 
-                      style={{ 
-                        width: `${(asset.circulatingSupply / asset.maxSupply) * 100}%` 
-                      }}
-                    ></div>
-                  </div>
-                )}
-              </td>
-              <td className="py-4 px-4">
-                <SparklineChart trend={asset.priceChange7d >= 0 ? 'up' : 'down'} />
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className={cn(
+                  "py-4 px-4 text-right font-semibold",
+                  changedPrices[asset.id] && "price-changed"
+                )}>
+                  ${livePrice !== undefined ? livePrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : asset.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className={`py-4 px-4 text-right ${asset.priceChange1h >= 0 ? 'text-crypto-positive' : 'text-crypto-negative'}`}>
+                  {asset.priceChange1h >= 0 ? '▲' : '▼'} {Math.abs(asset.priceChange1h)}%
+                </td>
+                <td className={`py-4 px-4 text-right ${liveChange ? (liveChange.priceChangePercent >= 0 ? 'text-crypto-positive' : 'text-crypto-negative') : (asset.priceChange24h >= 0 ? 'text-crypto-positive' : 'text-crypto-negative')}`}>
+                  {liveChange ? (liveChange.priceChangePercent >= 0 ? '▲' : '▼') : (asset.priceChange24h >= 0 ? '▲' : '▼')} {liveChange ? Math.abs(liveChange.priceChangePercent).toFixed(2) : Math.abs(asset.priceChange24h)}%
+                </td>
+                <td className={`py-4 px-4 text-right ${asset.priceChange7d >= 0 ? 'text-crypto-positive' : 'text-crypto-negative'}`}>
+                  {asset.priceChange7d >= 0 ? '▲' : '▼'} {Math.abs(asset.priceChange7d)}%
+                </td>
+                <td className="py-4 px-4 text-right">{formatNumber(asset.marketCap)}</td>
+                <td className="py-4 px-4 text-right">
+                  <div>{liveChange && liveChange.volume ? formatNumber(liveChange.volume) : formatNumber(asset.volume24h)}</div>
+                  <div className="text-sm text-gray-400">{asset.symbol}</div>
+                </td>
+                <td className="py-4 px-4 text-right">
+                  <div>{asset.circulatingSupply.toLocaleString()} {asset.symbol}</div>
+                  {asset.maxSupply && (
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                      <div 
+                        className="bg-crypto-orange h-1.5 rounded-full" 
+                        style={{ 
+                          width: `${(asset.circulatingSupply / asset.maxSupply) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
+                  )}
+                </td>
+                <td className="py-4 px-4 text-right">
+                  <SparklineChart data={asset.sparkline7d} />
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

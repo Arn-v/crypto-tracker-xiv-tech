@@ -1,11 +1,6 @@
-
 import React from 'react';
 
-interface SparklineChartProps {
-  trend: 'up' | 'down';
-}
-
-const SparklineChart: React.FC<SparklineChartProps> = ({ trend }) => {
+const SparklineChart = ({ trend }) => {
   const color = trend === 'up' ? '#10B981' : '#EF4444';
   
   // SVG path for an uptrend or downtrend
