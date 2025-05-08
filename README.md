@@ -40,6 +40,11 @@ A real-time cryptocurrency price tracking dashboard built with React and Vite. T
 - **Code Formatting**: Prettier
 - **Package Manager**: npm
 
+## 📹 Demo Video
+
+Watch the demo here: [Click to watch the video](https://your-video-link.com)
+
+
 ## Architecture
 
 ```
