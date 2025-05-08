@@ -1,48 +1,129 @@
+# Crypto Price Tracker
 
-# CryptoTracker - Real-time Cryptocurrency Dashboard
+A real-time cryptocurrency price tracking dashboard built with React and Vite. Track prices, market caps, and price changes for various cryptocurrencies with live updates from Binance WebSocket API.
 
-A responsive cryptocurrency price tracker app built with React and Redux Toolkit.
-
-![CryptoTracker App](./screenshot.png)
+![Crypto Price Tracker Screenshot](public/favicon.jpg)
 
 ## Features
 
-- Real-time cryptocurrency price updates (simulated using intervals)
-- State management with Redux Toolkit
-- Responsive design that works on all devices
-- Sorting capabilities for all data columns
-- Visual indicators for price changes
-- Color-coded indicators for price movements
+- 📊 Real-time price updates via Binance WebSocket
+- 📈 Price change tracking (1h, 24h, 7d)
+- 💰 Market cap and volume information
+- 📱 Responsive design for all devices
+- 🌓 Dark mode support
+- 🔄 Live data updates
+- 📉 Price change animations
+- 🔍 Sortable columns
+- 📊 Sparkline charts for 7-day trends
 
 ## Tech Stack
 
-- React for the UI
-- Redux Toolkit for state management
-- Tailwind CSS for styling
-- TypeScript for type checking
+### Frontend
+- **Framework**: React 18
+- **Build Tool**: Vite
+- **State Management**: Redux Toolkit
+- **Styling**: Tailwind CSS
+- **UI Components**: 
+  - Radix UI (Accessible components)
+  - Lucide Icons
+  - Recharts (for sparklines)
+- **Routing**: React Router v6
+- **Data Fetching**: 
+  - TanStack Query (React Query)
+  - WebSocket for real-time data
+- **Form Handling**: React Hook Form + Zod
+- **Notifications**: Sonner
 
-## How It Works
+### Development Tools
+- **Language**: JavaScript/JSX
+- **Linting**: ESLint
+- **Code Formatting**: Prettier
+- **Package Manager**: npm
 
-The application simulates real-time data updates by randomly adjusting cryptocurrency prices and metrics every 1-2 seconds. This is managed through a mock WebSocket service that dispatches updates to the Redux store.
+## Architecture
 
-### Key Components
+```
+src/
+├── app/                 # Redux store configuration
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components
+│   └── features/       # Feature-specific components
+├── features/           # Feature modules
+│   └── crypto/         # Crypto-related features
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions and configurations
+├── pages/              # Page components
+└── utils/              # Helper functions
+```
 
-- **CryptoTable**: Displays cryptocurrency data in a sortable, responsive table
-- **SparklineChart**: Shows a simplified 7-day price trend chart
-- **MockWebSocket**: Simulates real-time data updates
-- **cryptoSlice**: Redux slice that manages the state of the cryptocurrency data
+## Setup Instructions
 
-## Getting Started
+### Prerequisites
+- Node.js (v16 or higher)
+- npm (v7 or higher)
 
-1. Clone the repository
-2. Install dependencies with `npm install`
-3. Start the development server with `npm run dev`
-4. Open your browser to the URL shown in the terminal
+### Installation
 
-## Customization
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd crypto-dash-frontend
+```
 
-You can modify the update frequency in the `MockWebSocket` class by changing the `updateFrequency` parameter when instantiating the class.
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Build for production:
+```bash
+npm run build
+```
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+```env
+VITE_API_URL=your_api_url_here
+```
+
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run build:dev` - Build for development
+
+### Code Structure
+
+- **Components**: Reusable UI components in `src/components`
+- **Features**: Feature-specific logic in `src/features`
+- **Hooks**: Custom React hooks in `src/hooks`
+- **Utils**: Helper functions in `src/utils`
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Binance WebSocket API for real-time data
+- Radix UI for accessible components
+- Tailwind CSS for styling
+- Vite for fast development experience
